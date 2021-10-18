@@ -1,46 +1,63 @@
-import logo from './logo.svg';
 import React, {useState, useEffect} from "react";
-import './App.css';
 
-import firebase from 'firebase/app';
+import firebase from './firebase.js';
 import 'firebase/firestore';
 
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBR-yv4Tzb9NHonmEk6E53APR64vmWDwmU",
-    authDomain: "meetup-1a50b.firebaseapp.com",
-    projectId: "meetup-1a50b",
-    storageBucket: "meetup-1a50b.appspot.com",
-    messagingSenderId: "21582739950",
-    appId: "1:21582739950:web:eca1cc25af75001c5c76ff",
-    measurementId: "G-KD454655GW"
-};
+class usersDisplay extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {userList : []}
+    }
+    render() {
+        return(
+         <div>
 
-firebase.initializeApp(firebaseConfig);
+         </div>
+        )
+    }
+}
 
 
 function App() {
-    const [user, setUser] = useState([]);
+    //useState ==> ["Name of the set", Name of the function to set the set"]
+    const [users, setUser] = useState([]);
+    const [activities, setActivity] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    //Database
-    const db = firebase.firestore();
+    //Database for users
+    const dbUsers = firebase.firestore().collection("user");
 
-    const usersRef = db.collection("user");
+    //Database for users
+    const dbActivity = firebase.firestore().collection("activity_type");
 
-    //Users info retrieval function
-    function getUsers(){
+
+
+    //Data retrieval function --> Loading phase
+    function getData(){
         //Need to put on true
-        setLoading(false);
-        usersRef.get().then((item)=> {
+        setLoading(true);
+        dbUsers.get().then((item)=> {
+            //Collecting data from the retrieval
             const usersItems = item.docs.map((doc) => doc.data());
+
+            //Setting the User List
             setUser(usersItems);
+        });
+
+        dbActivity.get().then((item)=> {
+            //Collecting data from the retrieval
+            const actItems = item.docs.map((doc) => doc.data());
+
+            //Setting the activity List
+            setActivity(actItems);
             setLoading(false);
-    });
-    }
+        })};
+
+
 
     useEffect(() => {
-        getUsers();
+        getData();
     },[]);
 
     //Loading Screen
@@ -48,16 +65,31 @@ function App() {
         return <h1>Loading in progress...</h1>
     }
 
+
+
   return (
-    <div className="App">
-        List of users :
-        <br/>
-        {user.map((u)=> (
-            <div key={u.id}>
-               Username : {u.name}
-                <br/>
-            </div>
-        ))}
+    <div>
+        <div>
+            <h2>List of users :</h2>
+            {users.map((u)=> (
+                <div key={u.id}>
+                    - Username : {u.name}
+                </div>
+            ))}
+        </div>
+        <div>
+
+            <h2>List of activities :</h2>
+            {activities.map((u)=> (
+                <div key={u.idActivity}>
+                    - Activities : {u.name} with id of {u.idActivity}
+                </div>
+            ))}
+
+        </div>
+
+        {/* HTML code of the usersDisplay class */}
+        <usersDisplay/>
     </div>
   );
 }
