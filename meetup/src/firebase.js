@@ -3,13 +3,13 @@ import 'firebase/firestore';
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBR-yv4Tzb9NHonmEk6E53APR64vmWDwmU",
-    authDomain: "meetup-1a50b.firebaseapp.com",
-    projectId: "meetup-1a50b",
-    storageBucket: "meetup-1a50b.appspot.com",
-    messagingSenderId: "21582739950",
-    appId: "1:21582739950:web:eca1cc25af75001c5c76ff",
-    measurementId: "G-KD454655GW"
+    apiKey: "AIzaSyDcnUJQARPQPUnh9ypX7V2Fz6aPhFfgNqg",
+    authDomain: "cs353-team3.firebaseapp.com",
+    projectId: "cs353-team3",
+    storageBucket: "cs353-team3.appspot.com",
+    messagingSenderId: "855698334596",
+    appId: "1:855698334596:web:e3af74392a1b4fb690f3d1",
+    measurementId: "G-T5C8JLS9V7"
 };
 
 firebase.initializeApp(firebaseConfig);
