@@ -1,7 +1,11 @@
+import './App.css';
 import React, {useState, useEffect} from "react";
-
+import {Link} from 'react-router';
 import firebase from './firebase.js';
 import 'firebase/firestore';
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import Profile from "./Pages/Profile";
+import Login from "./Pages/Login";
 
 
 class usersDisplay extends React.Component {
@@ -17,12 +21,11 @@ class usersDisplay extends React.Component {
         )
     }
 }
-
-
 function App() {
     //useState ==> ["Name of the set", Name of the function to set the set"]
     const [users, setUser] = useState([]);
     const [activities, setActivity] = useState([]);
+    const [events, setEvent] =  useState([]);
     const [loading, setLoading] = useState(false);
 
     //Database for users
@@ -31,19 +34,21 @@ function App() {
     //Database for users
     const dbActivity = firebase.firestore().collection("activity_type");
 
-
+    //Database for events 
+    const dbEvents = firebase.firestore().collection("event");
 
     //Data retrieval function --> Loading phase
-    function getData(){
+    function getData() {
         //Need to put on true
         setLoading(true);
         dbUsers.get().then((item)=> {
             //Collecting data from the retrieval
             const usersItems = item.docs.map((doc) => doc.data());
-
+            
             //Setting the User List
-            setUser(usersItems);
+            setUser(usersItems);     
         });
+
 
         dbActivity.get().then((item)=> {
             //Collecting data from the retrieval
@@ -52,9 +57,8 @@ function App() {
             //Setting the activity List
             setActivity(actItems);
             setLoading(false);
-        })};
-
-
+        })
+    };
 
     useEffect(() => {
         getData();
@@ -65,33 +69,49 @@ function App() {
         return <h1>Loading in progress...</h1>
     }
 
-
-
-  return (
-    <div>
+    return ( 
+        
         <div>
-            <h2>List of users :</h2>
-            {users.map((u)=> (
-                <div key={u.id}>
-                    - Username : {u.name}
-                </div>
-            ))}
+            <div>
+                <Router>
+                    <Switch>
+                        <Route exact path="/profile" component={Profile} />
+                        <Route exact path="/login" component={Login} />
+                    </Switch>
+                </Router>
+            </div>
+            <div>
+                <h2>List of users :</h2>
+                {users.map((u)=> (
+                    <div key={u.id}>
+                        - Username : {u.name}
+                    </div>
+                ))}
+            </div>
+            <div>
+                <h2>List of events :</h2>
+                {events.map((u)=> (
+                    <div key={u.Name}>
+                        - Name : {u.Name}
+                    </div>
+                ))}
+            </div>
+            <div>
+                <h2>List of activities :</h2>
+                {activities.map((u)=> (
+                    <div key={u.idActivity}>
+                        - Activities : {u.name} with id of {u.idActivity}
+                    </div>
+                ))}
+            </div>
+
+            {/* HTML code of the usersDisplay class */}
+            <usersDisplay/>
         </div>
-        <div>
-
-            <h2>List of activities :</h2>
-            {activities.map((u)=> (
-                <div key={u.idActivity}>
-                    - Activities : {u.name} with id of {u.idActivity}
-                </div>
-            ))}
-
-        </div>
-
-        {/* HTML code of the usersDisplay class */}
-        <usersDisplay/>
-    </div>
-  );
+        
+        
+    );
 }
+export default  App;
 
-export default App;
+
