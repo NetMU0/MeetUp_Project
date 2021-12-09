@@ -1,25 +1,36 @@
 import React from "react";
-<html>
-    <head>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com"></meta>        
-    </head>
-</html>
+import { GoogleLogin } from 'react-google-login';
+
+const clientId = "855698334596-sqkm2smboe6kfh4ikk8fqvonjkh39rga.apps.googleusercontent.com";       
+
 function Login() {
+    const onSuccess = (res) => {
+      console.log('Login Success: currentUser:', res.profileObj);
+      alert(
+        'Logged in successfully welcome ${res.profileObj.name}'
+      );
+    };
+  
+    const onFailure = (res) => {
+      console.log('Login failed: res:', res);
+      alert(
+        'Failed to login'
+      );
+    };
+  
     return (
-        <div>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
-        </div>
+      <div>
+        <GoogleLogin
+          clientId={clientId}
+          buttonText="Login"
+          onSuccess={onSuccess}
+          onFailure={onFailure}
+          cookiePolicy={'single_host_origin'}
+          style={{ marginTop: '100px' }}
+          isSignedIn={true}
+        />
+      </div>
     );
-}
-
-
-function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
-
-export default Login;
+  
+  export default Login;

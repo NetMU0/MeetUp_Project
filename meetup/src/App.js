@@ -6,7 +6,8 @@ import 'firebase/firestore';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Profile from "./Pages/Profile";
 import Login from "./Pages/Login";
-
+import CreateEvent from "./Pages/CreateEvent";
+import JoinEvent from "./Pages/JoinEvent";
 
 class usersDisplay extends React.Component {
     constructor(props){
@@ -77,6 +78,8 @@ function App() {
                     <Switch>
                         <Route exact path="/profile" component={Profile} />
                         <Route exact path="/login" component={Login} />
+                        <Route exact path="/create" component={CreateEvent} />
+                        <Route exact path="/join" component={JoinEvent} />
                     </Switch>
                 </Router>
             </div>

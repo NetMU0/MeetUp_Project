@@ -1,8 +1,9 @@
-import './App.css';
-import firebase from './firebase.js';
+import '../App.css';
+import firebase from '../firebase.js';
 import 'firebase/firestore';
 import React, {useState, useEffect} from "react";
-import Datetime from 'react-datetime';
+//import Datetime from 'react-datetime';
+
 const CreateEvent =()=> {
   //Databases for users
   const [eventname,setEventName] = useState("");
