@@ -12,18 +12,13 @@ var currentUID = "lp0rde3sw";
 var currentUserName = "Tooni"
 
 const JoinEvent =()=> {
-  //Databases for users
-  const [userID,setUserID] = useState("");
-  const [eventID,setEvenID] = useState("");
-  const [rating, setRating] = useState(0)
   const [events, setEvents] = useState([]);
   const [eventsJoined, setEventsJoined] = useState([]);
-
     
   useEffect(() => {
       console.log('useEffect Hook!!!');
 
-      firebase.firestore().collection('eventsJoined').onSnapshot(snapshot => {
+      firebase.firestore().collection('eventsJoined').where('UserID', '==',currentUID).onSnapshot(snapshot => {
         console.log('Firebase Snap!');
         setEventsJoined(snapshot.docs.map(doc => {
           return {
@@ -52,9 +47,10 @@ const JoinEvent =()=> {
     // TODO: UserID = login userID (from login page)
   const joinEvent = (e) => {
     firebase.firestore().collection("eventsJoined").add({
+        id: firebase.firestore.FieldValue.serverTimestamp(),
         EventID: e.id,
         UserID: currentUID,
-        Rating: rating
+        Rating: 5
     })
     .then(()=>{
       alert('You are going to join this event: ' + e.Name);
@@ -66,17 +62,16 @@ const JoinEvent =()=> {
 
   };
 
-  const rateEvent = (e,ratingValue) => {
-    setRating(ratingValue)
+  const rateEvent = (e,rate) => {
     firebase.firestore().collection('eventsJoined').doc(e.id).update({
-      Rating: ratingValue
+      Rating: rate/20
     });
   };
 
   
   return (
     <Container maxWidth="sm">
-      <h2>Current USER: {currentUserName}</h2>
+      <h3>Current USER: {currentUserName} (UserID: {currentUID})</h3>
       <h2>LIST OF EVENTS</h2>
       <List dense={true}>
       {
@@ -100,14 +95,19 @@ const JoinEvent =()=> {
       <List dense={true}>
       {
         eventsJoined.map(e => (
-          <ListItem key={e.id} >
+          <ListItem >
             <ListItemText
               primary={e.EventID + ' -- ' +e.UserID}
               secondary={e.Rating}
             />
             <ListItemSecondaryAction>
                 <div >
-                  <Rating onClick={() => rateEvent(e, 5)} />
+                  <Rating
+                      ratingValue={e.Rating}
+                      onClick={(newValue) => {
+                        rateEvent(e,newValue);
+                      }}
+                    />
                 </div>
             </ListItemSecondaryAction>
           </ListItem>
