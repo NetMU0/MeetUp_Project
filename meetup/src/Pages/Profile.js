@@ -1,153 +1,231 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import React, {useState, useEffect} from "react";
-import 'firebase/firestore';
-import firebase from '../firebase.js';
-import Navbar from 'react-bootstrap/Navbar';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-{/*import React from "react";*/}
-{/*import { useHistory } from "react-router-dom";*/}
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useEffect } from "react";
+import "firebase/firestore";
+import firebase from "./firebase.js";
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+import { useNavigate } from "react-router-dom";
 
 class usersDisplay extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {userList : []}
-    }
-    render() {
-        return(
-         <div>
-
-         </div>
-        )
-    }
+  constructor(props) {
+    super(props);
+    this.state = { userList: [] };
+  }
+  render() {
+    return <div></div>;
+  }
 }
 function Profile() {
-    {/*let history = useHistory();*/}
-    const [events, setEvent] =  useState([]);
-    const [users, setUser] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const dbEvents = firebase.firestore().collection("event");
-    const dbUsers = firebase.firestore().collection("user");
+  const navigate = useNavigate();
 
-    //Current user's id  - How to get the id of the currently logged in user? From cache?
-    var currentUID = "asd546s789";
-    
-    async function getUserById(currentUID) {
-        /*
-        for (const user in dbUsers) {
-            if(user.id == currentUID) {
-                console.log(user);
-                return user;
-            }
-        }*/
-        for (const user in dbUsers.get()) {
-            if(user.id == currentUID) {
-                console.log(user);
-                return user;
-            }
-        }
-        /*const cityRef = dbUsers.doc(currentUID);
-        const doc = await cityRef.get();
-        if (!doc.exists) {
-          console.log('No such document!');
-        } else {
-          console.log('Document data:', doc.data());
-          return doc.data();
-        }*/
-    }
+  //useState ==> ["Name of the set", Name of the function to set the set"]
+  const [events, setEvents] = useState([]);
+  const [users, setUser] = useState([]);
+  const [eventsJoined, setEventJoined] = useState([]);
+  const [eventsCreated, setEventCreated] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [listJoined, setListJoined] = useState([]);
 
-   const user = getUserById(currentUID);
-   // const joinedEvents = user.EventsJoined;
-    
-    
-    //How to extract the array from db?
-   // const joinedEvents = ['121r3wfe2', '3276492kesl'];  
-    //const joinedEvents = [];
-    //then use the filter function 
+  //Database for events
+  const dbEvents = firebase.firestore().collection("event");
+  //Database for events joined
+  const dbEventsJoined = firebase.firestore().collection("eventsJoined");
+  //Database for events created
+  const dbEventsCreated = firebase.firestore().collection("eventsCreated");
+  //Database for users
+  const dbUsers = firebase.firestore().collection("userInfo");
 
-    function getData() {
-        dbEvents.get().then((item)=> {
-            const eventsItems = item.docs.map((doc) => doc.data());
+  //Current user's id  - How to get the id of the currently logged in user? From cache?
+  let currentUID = "lp0rde3sw";
 
-            //Setting the Event List
-            setEvent(eventsItems);
+  //Data retrieval function --> Loading phase
+  function getData() {
+    dbEventsJoined.get().then((item) => {
+      //item is each document
+      //Collecting data from the retrieval
+      const eventsJoinedItems = item.docs.map((doc) => doc.data());
+      //Setting the Events Joined List
+      setEventJoined(eventsJoinedItems);
+    });
+    dbEventsCreated.get().then((item) => {
+      const eventsCreatedItems = item.docs.map((doc) => doc.data());
+      setEventCreated(eventsCreatedItems);
+    });
+    dbEvents.get().then((item) => {
+      //item is each document
+      //Collecting data from the retrieval
+      const eventsItems = item.docs.map((doc) => doc.data());
+      //Setting the Events Joined List
+      setEvents(eventsItems);
+    });
+    dbUsers.get().then((item) => {
+      //Collecting data from the retrieval
+      const usersItems = item.docs.map((doc) => doc.data());
+      //Setting the Users List
+      setUser(usersItems);
+    });
+  }
 
-        });
-    };
-    useEffect(() => {
-        getData();
-    },[]);
+  useEffect(() => {
+    getData();
+  }, []);
 
-    //Loading Screen
-    if (loading){
-        return <h1>Loading in progress...</h1>
-    }
-
-    return (
-        <div>
-            <Navbar bg="dark" variant="dark">
-                <Container>
-                    {/*<Navbar.Brand href="#home">Navbar</Navbar.Brand>*/}
-                    <Nav className="me-auto">
-                        <Nav.Link href="#home">Create Event</Nav.Link>
-                        <Nav.Link href="#features">Search for Event</Nav.Link>
-                        {/*<button type="button"
+  return (
+    <div>
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Nav className="me-auto">
+            <Nav.Link href="/home">Home</Nav.Link>
+            <Nav.Link href="/create">Create Event</Nav.Link>
+            {/*<button type="button"
                             onClick={() => {
                             history.push("/index");
                             }}>Logout
-                        </button>*/}
-                    </Nav>
-                    <Nav>
-                        <Nav.Link href="#deets">Photo</Nav.Link>
-                        <Nav.Link href="#deets">Sign Out</Nav.Link>
-                    </Nav>
-                </Container>
-            </Navbar>
-            <Container>
-                <Row>
-                    <Col xs={6}>
-                     Text
-                    </Col>
-                    <Col xs={6}>
-                        Text
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={6}>
-                        <Card style={{ width: '30rem' }}>
-                            <Card.Body>
-                                <Card.Title> Events Joined </Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">See all the events you have joined below</Card.Subtitle>
-                                <Card.Body>
-                                    
-                                </Card.Body>
-                                
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col xs={6}>
-                        <Card style={{ width: '30rem' }}>
-                            <Card.Body>
-                                <Card.Title> Events Created </Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">See all the events you have created below</Card.Subtitle>
-                                <Card.Body>
-                                    <Card.Title> Event 1 </Card.Title>
-                                    <Card.Text>
-                                        Some quick example text to build on the card title and make up the bulk of
-                                        the card's content.
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
-        </div>
-    );
+                          </button>*/}
+          </Nav>
+          <Nav>
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Type your activity"
+                aria-label="Recipient's username"
+                aria-describedby="basic-addon2"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onClick={() => navigate("/search")}
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </Nav>
+          <Nav>
+            <Nav.Link href="/settings">Settings</Nav.Link>
+            <Nav.Link href="/">Sign Out</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
+      <Container>
+        <Row>
+          <br></br>
+          <Col xs={6}>Hello, {currentUID}!</Col>
+          <br></br>
+          <h1 class="h1profile">My Events</h1>
+          <br></br>
+          <Col xs={6}></Col>
+        </Row>
+        <Row>
+          <Col xs={6}>
+            <h2 class="h2profile">Attending Events</h2>
+            {events.map((event) =>
+              eventsJoined.some(
+                (evJ) => evJ.EventID === event.id && evJ.UserID == currentUID
+              ) ? (
+                <div>
+                  <br />
+                  <Card class="card">
+                    <Card.Body>
+                      <div key={event.EventId}>
+                        <Card.Title>{event.Name}</Card.Title>
+                        <Card.Text>
+                          {event.Date}
+                          <br />
+                          {event.Time}
+                          <br />
+                          {event.Location}
+                          <br />
+                          {event.Description}
+                        </Card.Text>
+                        <button
+                          type="viewbutton"
+                          onClick={() => {
+                            dbEvents.doc("A24jfQHpHeNV6SFficB3").delete();
+                            window.location.reload();
+                          }}
+                        >
+                          Leave
+                        </button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </div>
+              ) : (
+                ""
+              )
+            )}
+          </Col>
+          <Col xs={6}>
+            <h2 class="h2profile">Created Events</h2>
+            {events.map((event) =>
+              eventsCreated.some(
+                (evC) => evC.eventID == event.id && evC.userID == currentUID
+              ) ? (
+                <div>
+                  <br />
+                  <Card class="card">
+                    <Card.Body>
+                      <div key={event.id}>
+                        <Card.Title> {event.Name}</Card.Title>
+                        <Card.Text>
+                          {event.Date}
+                          <br /> {event.Time}
+                          <br /> {event.Location}
+                          <br /> {event.Description}
+                        </Card.Text>
+                        <button
+                          type="viewbutton"
+                          onClick={() => {
+                            navigate("/WhoJoined");
+                          }}
+                        >
+                          Guestlist
+                        </button>
+                        <button
+                          type="viewbutton"
+                          onClick={() => {
+                            navigate("/update");
+                          }}
+                        >
+                          Update
+                        </button>
+                        <button
+                          type="viewbutton"
+                          onClick={() => {
+                            dbEvents.doc("bNXqt1xPcWEthiHlkN5v").delete();
+                            window.location.reload();
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </div>
+              ) : (
+                ""
+              )
+            )}
+          </Col>
+        </Row>
+      </Container>
+      <button
+        onClick={() => {
+          navigate("/JoinEvent");
+        }}
+      >
+        {" "}
+        Rate Events
+      </button>
+    </div>
+  );
 }
 
 export default Profile;
